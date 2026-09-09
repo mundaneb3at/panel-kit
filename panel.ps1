@@ -54,6 +54,13 @@ function Get-Lanes {
     # a UTF-8 file as the legacy codepage, mangling any non-ASCII pattern into mojibake that
     # silently never matches.
     $raw = Get-Content -LiteralPath $panelPath -Encoding UTF8
+    # A relative `source` (e.g. `.\probes.ps1`) resolves against the MANIFEST's own directory,
+    # not the caller's current directory -- otherwise a manifest that ships relative example
+    # paths (like PANEL.template.md's) only works when `panel` is run from inside that folder,
+    # defeating the whole point of setup.ps1 putting `panel` on PATH so it runs from anywhere.
+    # Harmless for probe: rows, whose non-path `source` text (e.g. "Win32_OperatingSystem") is
+    # never read back -- Evaluate-Lane's probe branch ignores Source entirely.
+    $manifestDir = Split-Path -Parent (Resolve-Path -LiteralPath $panelPath).Path
     $rows = @()
     $seenHeader = $false
     $seenSep = $false
@@ -68,10 +75,14 @@ function Get-Lanes {
         if ($cells.Count -lt 2) { continue }
         $cells = $cells[1..($cells.Count - 2)] | ForEach-Object { $_.Trim() }
         if ($cells.Count -lt 6) { continue }
+        $src = Strip-Backtick $cells[2]
+        if ($src -and -not [System.IO.Path]::IsPathRooted($src)) {
+            $src = Join-Path $manifestDir $src
+        }
         $rows += [pscustomobject]@{
             Lane   = $cells[0]
             Group  = $cells[1]
-            Source = Strip-Backtick $cells[2]
+            Source = $src
             Rule   = Strip-Backtick $cells[3]
             Say    = $cells[4]
             Open   = Strip-Backtick $cells[5]
