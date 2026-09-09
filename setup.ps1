@@ -66,7 +66,7 @@ Install-Shim (Join-Path $binDir 'panel') $bashContent
 # NOTE: this reads/writes the REAL logged-in user's registry PATH, not a path scoped to
 # $env:USERPROFILE -- there is no per-USERPROFILE PATH in Windows. -DryRun skips the write.
 $userPath = [Environment]::GetEnvironmentVariable('PATH', 'User')
-$already = @($userPath -split ';' | Where-Object { $_ -and $_.TrimEnd('\') -eq $binDir.TrimEnd('\') })
+$already = @($userPath -split ';' | Where-Object { $_ -and $_.Trim().TrimEnd('\') -eq $binDir.TrimEnd('\') })
 if ($already.Count -gt 0) {
     Write-Host "  exists   $binDir already on user PATH" -ForegroundColor DarkGray
 } elseif ($DryRun) {
