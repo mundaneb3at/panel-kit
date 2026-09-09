@@ -77,6 +77,22 @@ if ($already.Count -gt 0) {
     Write-Host "  added    $binDir to user PATH (open a new shell for it to take effect)" -ForegroundColor Green
 }
 
+# --- restore the example manifest's intended file ages ------------------------------------
+# `git clone` sets every checked-out file's mtime to checkout time, which destroys the
+# ordering the "recent log errors" glob-mode demo in PANEL.template.md depends on (it should
+# read only example-logs\new.log, the newest file). Without this, a fresh clone can pick
+# either file as "newest" and the demo silently shows the wrong lane color. Idempotent and
+# skipped entirely if this isn't a copy of the kit with its example files (a user's own
+# project won't have them, and that's fine -- nothing to restore).
+$exLogs = Join-Path $kitRoot 'example-logs'
+$oldLog = Join-Path $exLogs 'old.log'
+$newLog = Join-Path $exLogs 'new.log'
+if ((Test-Path -LiteralPath $oldLog) -and (Test-Path -LiteralPath $newLog)) {
+    (Get-Item -LiteralPath $oldLog).LastWriteTime = (Get-Date).AddDays(-3)
+    (Get-Item -LiteralPath $newLog).LastWriteTime = (Get-Date).AddHours(-1)
+    Write-Host "  fixed    example-logs\ file ages (so the glob-mode demo lane reads correctly)" -ForegroundColor DarkGray
+}
+
 Write-Host ""
 Write-Host "Done. Open a NEW PowerShell or Git Bash window, then run: panel -Raw" -ForegroundColor Cyan
 Write-Host "(the current window's PATH is stale until you open a new one)" -ForegroundColor DarkGray
