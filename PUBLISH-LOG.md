@@ -21,6 +21,13 @@
 - **Commits:**
   - `8e26d70` — Initial commit: panel-kit v1
   - `888bd36` — setup.ps1: restore example-logs mtimes after install
+  - `62935c5` — Add PUBLISH-LOG.md (this file itself was D6-listed but missed on the first push; caught by the G8 refute pass)
+  - `f521ada` — setup.ps1: trim whitespace when checking if bin dir is already on PATH (G8 hostile-review finding)
+
+- **G8 refute pass (S4, 3 sonnet lanes):**
+  - already-done-elsewhere: PLAUSIBLE — two narrower personal precursor tools existed in-house (`brain-index\automation-lanes.ps1`, `brain-index\local-lane-panel.ps1`), neither general-purpose/pluggable; no published-repo duplicate. Acknowledged lineage (this kit IS the intended generalization), not an accidental duplicate.
+  - clone-match: REFUTED — fresh clone matched canonical byte-for-byte (the one PUBLISH-LOG.md self-reference lag noted and closed in this same commit), visibility PRIVATE confirmed independently.
+  - hostile setup.ps1 review: 1 CONFIRMED (low-severity PATH-whitespace dup bug, fixed above), 4 REFUTED (clobber-prevention structurally unreachable overwrite path, PS 5.1 clean, missing-panel.ps1 guard works as intended, no silent-failure path).
 
 - **Real user PATH registry:** confirmed clean (27 entries, no test-residue contamination) after every `-DryRun` test pass and again after the whole G7 sequence completed.
 
