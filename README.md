@@ -116,4 +116,4 @@ create. Remove or rename the existing file first if you want this kit to manage 
 
 ## License
 
-CC0 — see `LICENSE`. Do whatever you want with it.
+MIT — see `LICENSE`. Credit required via the copyright notice.
